@@ -1,0 +1,8 @@
+oit_article_index:
+  path: /
+  methods: GET
+  defaults:
+    _controller: 'Vex6\OpenArticles\Controller\AdminOpenArticles::indexAction'
+    _disable_module_prefix: true
+    _legacy_controller: 'AdminOpenArticles'
+    _legacy_link: 'AdminOpenArticles'

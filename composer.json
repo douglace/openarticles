@@ -1,0 +1,15 @@
+{
+    "name": "vex6/openarticles",
+    "autoload": {
+        "psr-4": {
+            "Vex6\\OpenArticles\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Douglace",
+            "email": "kvdouglace@gmail.com"
+        }
+    ],
+    "require": {}
+}

@@ -9,6 +9,9 @@ class AdminOpenArticles extends FrameworkBundleAdminController
 {
     public function indexAction()
     {
-        return new Response("Bonjour le monde");
+        return $this->render('@Modules/openarticles/views/templates/admin/article.html.twig', [
+            'enableSidebar' => true,
+            'layoutTitle' => $this->trans('Liste des articles', 'Modules.Openarticles.Admin'),
+        ]);
     }
 }

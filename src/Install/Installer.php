@@ -15,7 +15,7 @@ class Installer
         [
             'class_name' => 'AdminOpenArticles',
             'parent_class_name' => 'AdminCatalog',
-            'name' => 'Gestion des articles - OPEN',
+            'name' => 'Gestion des articles',
             'icon' => 'book',
             'wording' => 'Gestion des articles',
             'wording_domain' => 'Modules.Openarticle.Admin',

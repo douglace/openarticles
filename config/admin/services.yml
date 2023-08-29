@@ -1,0 +1,39 @@
+services:
+  _defaults:
+    public: true
+
+  # GRID
+  openarticles.grid.definition.factory:
+    public: true
+    class : 'Vex6\OpenArticles\Grid\Definition\Factory\ArticleDefinitionFactory'
+    parent: 'prestashop.core.grid.definition.factory.abstract_grid_definition'
+  
+  openarticles.grid.query_builder:
+    class: 'Vex6\OpenArticles\Grid\Query\ArticleQueryBuilder'
+    parent: 'prestashop.core.grid.abstract_query_builder'
+    public: true
+    arguments:
+      - '@prestashop.core.query.doctrine_search_criteria_applicator'
+      - "@=service('prestashop.adapter.legacy.context').getContext().language.id"
+      - '@prestashop.core.grid.query.filter.doctrine_filter_applicator'
+
+  openarticles.grid.data.factory:
+    class: '%prestashop.core.grid.data.factory.doctrine_grid_data_factory%'
+    arguments:
+      - '@openarticles.grid.query_builder'
+      - '@prestashop.core.hook.dispatcher'
+      - '@prestashop.core.grid.query.doctrine_query_parser'
+      - 'Articles'
+
+  openarticles.grid.data.factory.decorator:
+    class: 'Vex6\OpenArticles\Grid\Data\Factory\ArticleGridDataFactory'
+    arguments:
+      - '@openarticles.grid.data.factory'
+
+  openarticles.grid.grid_factory:
+    class: 'PrestaShop\PrestaShop\Core\Grid\GridFactory'
+    arguments:
+      - '@openarticles.grid.definition.factory'
+      - '@openarticles.grid.data.factory.decorator'
+      - '@prestashop.core.grid.filter.form_factory'
+      - '@prestashop.core.hook.dispatcher'

@@ -37,3 +37,25 @@ services:
       - '@openarticles.grid.data.factory.decorator'
       - '@prestashop.core.grid.filter.form_factory'
       - '@prestashop.core.hook.dispatcher'
+
+
+ # FORM
+
+  openarticles.type.article:
+    class: 'Vex6\OpenArticles\Form\Type\ArticleType'
+    parent: 'form.type.translatable.aware'
+    public: true
+    tags:
+      - { name: form.type }
+
+  openarticles.form.identifiable.object.builder:
+    class: 'PrestaShop\PrestaShop\Core\Form\IdentifiableObject\Builder\FormBuilder'
+    factory: 'prestashop.core.form.builder.form_builder_factory:create'
+    arguments:
+      - 'Vex6\OpenArticles\Form\Type\ArticleType'
+      - '@openarticles.form.identifiable_object.data.provider'
+
+  openarticles.form.identifiable_object.data.provider:
+    class: 'Vex6\OpenArticles\Form\Provider\ArticleFormDataProvider'
+
+

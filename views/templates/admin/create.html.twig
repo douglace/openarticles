@@ -1,0 +1,43 @@
+{% extends '@PrestaShop/Admin/layout.html.twig' %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col">
+
+            {% block artlice_form %}
+                {{ form_start(articleForm) }}
+                <div class="card">
+                    <h3 class="card-header">
+                        <i class="material-icons">edit</i>
+                        {{ 'Article'|trans({}, 'Modules.Openarticles.Admin') }}
+                    </h3>
+                    <div class="card-block">
+                        <div class="form-wrapper card-text">
+                            {{ form_errors(articleForm) }}
+
+                            {% block push_form_rest %}
+                                {{ form_rest(articleForm) }}
+                            {% endblock %}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ path('oit_article_index') }}" class="btn btn-outline-secondary">
+                            {{ 'Cancel'|trans({}, 'Admin.Actions') }}
+                        </a>
+                        <button class="btn btn-primary float-right">
+                            {{ 'Save'|trans({}, 'Admin.Actions') }}
+                        </button>
+                    </div>
+                </div>
+                {{ form_end(articleForm) }}
+            {% endblock %}
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('../modules/openarticles/views/assets/js/form.bundle.js') }}"></script>
+{% endblock %}

@@ -17,8 +17,29 @@ class AdminOpenArticles extends FrameworkBundleAdminController
 
         return $this->render('@Modules/openarticles/views/templates/admin/article.html.twig', [
             'enableSidebar' => true,
+            'layoutHeaderToolbarBtn' => $this->getToolbarButtons(),
             'layoutTitle' => $this->trans('Liste des articles', 'Modules.Openarticles.Admin'),
             'articleGrid' => $this->presentGrid($grid),
+        ]);
+    }
+
+    public function getToolbarButtons(): array
+    {
+        return [
+            'add' => [
+                'desc' => $this->trans('Add new article', 'Modules.Openarticles.Admin'),
+                'icon' => 'add_circle_outline',
+                'href' => $this->generateUrl('oit_article_create'),
+            ],
+        ];
+    }
+
+    public function createAction(Request $request) {
+        $formBuilder = $this->get('openarticles.form.identifiable.object.builder');
+        $form = $formBuilder->getForm();
+
+        return $this->render('@Modules/openarticles/views/templates/admin/create.html.twig', [
+            'articleForm' => $form->createView()
         ]);
     }
 }

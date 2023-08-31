@@ -53,15 +53,16 @@ class ArticleQueryBuilder extends AbstractDoctrineQueryBuilder
     {
         $qb = $this->getQueryBuilder($searchCriteria->getFilters());
         $qb
-            ->select('oa.`id`, oa.`position`, oa.`active`')
+            ->select('oa.`id` article_id, oa.`position`, oa.`active`')
             ->addSelect('oal.`lang_id`, oal.`title`')
+            ->addSelect('pl.`name` product')
         ;
 
         $this->searchCriteriaApplicator
             ->applyPagination($searchCriteria, $qb)
             ->applySorting($searchCriteria, $qb)
         ;
-        
+
         return $qb;
     }
 
@@ -93,6 +94,11 @@ class ArticleQueryBuilder extends AbstractDoctrineQueryBuilder
                 $this->dbPrefix . 'open_articles_lang',
                 'oal',
                 'oal.`open_article_id` = oa.`id` AND oal.`lang_id` = :lang_id'
+            )->leftJoin(
+                'oa',
+                $this->dbPrefix . 'product_lang',
+                'pl',
+                'pl.`id_product` = oa.`product_id` AND pl.`id_lang` = :lang_id'
             )
         ;
 
@@ -106,8 +112,9 @@ class ArticleQueryBuilder extends AbstractDoctrineQueryBuilder
         
         $this->filterApplicator->apply($qb, $sqlFilters, $filterValues);
 
+
         $qb->setParameter('lang_id', $this->contextLanguageId);
-        
+
         
         foreach ($filterValues as $filterName => $filter) {
             if ('active' === $filterName) {

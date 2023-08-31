@@ -15,3 +15,25 @@ oit_article_create:
     _disable_module_prefix: true
     _legacy_controller: 'AdminOpenArticles'
     _legacy_link: 'AdminOpenArticles'
+
+oit_article_edit:
+  path: /{articleId}/edit
+  methods: [GET, POST]
+  defaults:
+    _controller: 'Vex6\OpenArticles\Controller\AdminOpenArticles::editAction'
+    _disable_module_prefix: true
+    _legacy_controller: 'AdminOpenArticles'
+    _legacy_link: 'AdminOpenArticles'
+  requirements:
+    articleId: \d+
+
+oit_article_delete:
+  path: /{articleId}/delete
+  methods: POST
+  defaults:
+    _controller: 'Vex6\OpenArticles\Controller\AdminOpenArticles::deleteAction'
+    _disable_module_prefix: true
+    _legacy_controller: 'AdminOpenArticles'
+    _legacy_link: 'AdminOpenArticles'
+  requirements:
+    articleId: \d+

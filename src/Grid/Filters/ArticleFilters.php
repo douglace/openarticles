@@ -19,7 +19,7 @@ class ArticleFilters extends Filters
         return [
             'limit' => 10,
             'offset' => 0,
-            'orderBy' => 'id',
+            'orderBy' => 'article_id',
             'sortOrder' => 'asc',
             'filters' => [],
         ];

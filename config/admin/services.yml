@@ -59,3 +59,27 @@ services:
     class: 'Vex6\OpenArticles\Form\Provider\ArticleFormDataProvider'
 
 
+  # FORM HANDLER
+
+  openarticles.command.builder.article:
+    class: 'Vex6\OpenArticles\CommandBuilder\ArticleCommandBuilder'
+
+  openarticles.form.identifiable.object.data.handler:
+    class: 'Vex6\OpenArticles\Form\DataHandler\ArticleFormDataHandler'
+    arguments:
+      - '@prestashop.core.command_bus'
+      - '@openarticles.command.builder.article'
+
+  openarticles.form.identifiable.object.handler:
+    class: 'PrestaShop\PrestaShop\Core\Form\IdentifiableObject\Handler\FormHandler'
+    factory: 'prestashop.core.form.identifiable_object.handler.form_handler_factory:create'
+    arguments:
+      - '@openarticles.form.identifiable.object.data.handler'
+
+  openarticles.command.handler.add_article:
+    class: 'Vex6\OpenArticles\CommandHandler\AddArticleCommandHandler'
+    arguments:
+      - '@prestashop.core.admin.lang.repository'
+      - '@doctrine.orm.default_entity_manager'
+    tags:
+      - { name: 'tactician.handler', command: 'Vex6\OpenArticles\Command\AddArticleCommand' }

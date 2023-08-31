@@ -37,6 +37,20 @@ class AdminOpenArticles extends FrameworkBundleAdminController
     public function createAction(Request $request) {
         $formBuilder = $this->get('openarticles.form.identifiable.object.builder');
         $form = $formBuilder->getForm();
+        $form->handleRequest($request);
+
+        $formHandler = $this->get('openarticles.form.identifiable.object.handler');
+        $result = $formHandler->handle($form);
+
+        if (null !== $result->getIdentifiableObjectId()) {
+            $this->addFlash(
+                'success',
+                $this->trans('Successful creation.', 'Admin.Notifications.Success')
+            );
+
+            return $this->redirectToRoute('oit_article_index');
+        }
+
 
         return $this->render('@Modules/openarticles/views/templates/admin/create.html.twig', [
             'articleForm' => $form->createView()

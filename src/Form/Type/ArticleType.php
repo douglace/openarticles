@@ -30,7 +30,7 @@ class ArticleType extends TranslatorAwareType
             'type' => TextType::class,
             'required' => true,
             'label' => $this->trans('Titre', 'Modules.Openarticles.Admin')
-        ])->add('a_select_box', ChoiceType::class, [
+        ])->add('product_id', ChoiceType::class, [
             'required' => false,
             'label' => $this->trans('Produit', 'Admin.Catalog.Feature'),
             'choices' => [

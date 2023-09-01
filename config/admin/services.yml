@@ -45,6 +45,8 @@ services:
     class: 'Vex6\OpenArticles\Form\Type\ArticleType'
     parent: 'form.type.translatable.aware'
     public: true
+    arguments:
+      - '@openarticles.repository.article_repository'
     tags:
       - { name: form.type }
 
@@ -57,6 +59,8 @@ services:
 
   openarticles.form.identifiable_object.data.provider:
     class: 'Vex6\OpenArticles\Form\Provider\ArticleFormDataProvider'
+    arguments:
+      - '@openarticles.repository.article_repository'
 
 
   # FORM HANDLER
@@ -83,3 +87,20 @@ services:
       - '@doctrine.orm.default_entity_manager'
     tags:
       - { name: 'tactician.handler', command: 'Vex6\OpenArticles\Command\AddArticleCommand' }
+
+  openarticles.command.handler.edit_article:
+    class: 'Vex6\OpenArticles\CommandHandler\EditArticleCommandHandler'
+    arguments:
+      - '@prestashop.core.admin.lang.repository'
+      - '@openarticles.repository.article_repository'
+      - '@doctrine.orm.default_entity_manager'
+    tags:
+      - { name: 'tactician.handler', command: 'Vex6\OpenArticles\Command\EditArticleCommand' }
+
+  # REPOSITORY
+
+  openarticles.repository.article_repository:
+    class: Vex6\OpenArticles\Repository\ArticleRepository
+    factory: [ '@doctrine.orm.default_entity_manager', getRepository ]
+    arguments:
+      - Vex6\OpenArticles\Entity\OpenArticles

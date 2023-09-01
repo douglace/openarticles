@@ -5,6 +5,7 @@ namespace Vex6\OpenArticles\Form\DataHandler;
 use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler\FormDataHandlerInterface;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use Vex6\OpenArticles\CommandBuilder\ArticleCommandBuilderInterface;
+use Vex6\OpenArticles\ValueObject\ArticleId;
 
 class ArticleFormDataHandler implements FormDataHandlerInterface
 {
@@ -45,9 +46,12 @@ class ArticleFormDataHandler implements FormDataHandlerInterface
      * @param int $articleId
      * @param array $data
      * @return mixed
+     * @throws \Vex6\OpenArticles\Exception\InvalidArticleIdException
      */
     public function update($articleId, array $data)
     {
-        // TODO: Implement update() method.
+        $command = $this->builder->buildEditCommand(new ArticleId($articleId), $data);
+        $articleId = $this->commandBus->handle($command);
+        return $articleId;
     }
 }

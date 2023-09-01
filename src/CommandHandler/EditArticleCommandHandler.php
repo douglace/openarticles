@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Vex6\OpenArticles\CommandHandler;
 
+use PrestaShopBundle\Entity\Repository\LangRepository;
+use Vex6\OpenArticles\Command\EditArticleCommand;
 use Vex6\OpenArticles\Entity\OpenArticles as OpenArticlesEntity;
 use Doctrine\ORM\EntityManagerInterface;
 use Vex6\OpenArticles\Command\AddArticleCommand;
-use PrestaShopBundle\Entity\Repository\LangRepository;
 use Vex6\OpenArticles\Entity\OpenArticlesLang;
 use Vex6\OpenArticles\Exception\CannotAddArticleException;
+use Vex6\OpenArticles\Exception\CannotUpdateArticleException;
 use Vex6\OpenArticles\Exception\InvalidArticleIdException;
+use Vex6\OpenArticles\Repository\ArticleRepository;
 use Vex6\OpenArticles\ValueObject\ArticleId;
 
-final class AddArticleCommandHandler implements AddArticleCommandHandlerInterface
+final class EditArticleCommandHandler implements EditArticleCommandHandlerInterface
 {
 
     /**
@@ -22,32 +25,42 @@ final class AddArticleCommandHandler implements AddArticleCommandHandlerInterfac
     public $langRepository;
 
     /**
+     * @var ArticleRepository
+     */
+    public $repository;
+
+    /**
      * @var EntityManagerInterface
      */
     public $entityManager;
 
-    public function __construct(LangRepository $langRepository, EntityManagerInterface $entityManager)
+    /**
+     * @param ArticleRepository $repository
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(LangRepository $langRepository, ArticleRepository $repository, EntityManagerInterface $entityManager)
     {
         $this->langRepository = $langRepository;
+        $this->repository = $repository;
         $this->entityManager = $entityManager;
     }
 
     /**
      * @throws InvalidArticleIdException
      */
-    public function handle(AddArticleCommand $command): ArticleId
+    public function handle(EditArticleCommand $command): ArticleId
     {
-        $entity = new OpenArticlesEntity();
-        $this->createArticleFromCommand($entity, $command);
-        return new ArticleId( $entity->getId() );
+        $entity = $this->repository->find($command->getArticleId()->getValue());
+        $this->updateArticleFromCommand($entity, $command);
+        return $command->getArticleId();
     }
 
     /**
      * @param OpenArticlesEntity $article
-     * @param AddArticleCommand $command
+     * @param EditArticleCommand $command
      * @return void
      */
-    protected function createArticleFromCommand(OpenArticlesEntity $article, AddArticleCommand $command)
+    protected function updateArticleFromCommand(OpenArticlesEntity $article, EditArticleCommand $command)
     {
         try {
             $article->setActive((bool)$command->getActive());
@@ -82,15 +95,14 @@ final class AddArticleCommandHandler implements AddArticleCommandHandlerInterfac
                     $articleLang->setDescription($command->getDescription()[$language->getId()]);
                 }
 
-
                 $article->addArticleLang($articleLang);
             }
             
-            $this->entityManager->persist($article);
+            $this->entityManager->merge($article);
             $this->entityManager->flush();
 
-        } catch (CannotAddArticleException $e) {
-            throw new CannotAddArticleException("An error occurred while creating the article");
+        } catch (CannotUpdateArticleException $e) {
+            throw new CannotUpdateArticleException("An error occurred while creating the article");
         }
     }
 }

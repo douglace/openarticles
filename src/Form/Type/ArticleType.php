@@ -14,9 +14,30 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Vex6\OpenArticles\Repository\ArticleRepository;
 
 class ArticleType extends TranslatorAwareType
 {
+
+    /**
+     * @var ArticleRepository
+     */
+    private $repository;
+
+    /**
+     * @param TranslatorInterface $translator
+     * @param array $locales
+     * @param ArticleRepository $repository
+     */
+    public function __construct(
+        TranslatorInterface $translator,
+        array $locales,
+        ArticleRepository $repository)
+    {
+        parent::__construct($translator, $locales);
+        $this->repository = $repository;
+    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -33,11 +54,7 @@ class ArticleType extends TranslatorAwareType
         ])->add('product_id', ChoiceType::class, [
             'required' => false,
             'label' => $this->trans('Produit', 'Admin.Catalog.Feature'),
-            'choices' => [
-                'T-shirt' => 1,
-                'Chemise' => 2,
-                'Pantalon' => 3,
-            ],
+            'choices' => $this->repository->getProducts(),
             'choice_translation_domain' => 'Admin.Some.Domain',
         ])->add('resume', TranslateType::class, [
             'type' => TextareaType::class,

@@ -84,7 +84,7 @@ class OpenArticlesLang
 
     public function getTitle(): string
     {
-        return $this->title;
+        return $this->title ?? "";
     }
 
     public function setTitle(string $title): OpenArticlesLang
@@ -95,7 +95,7 @@ class OpenArticlesLang
 
     public function getResume(): string
     {
-        return $this->resume;
+        return $this->resume ?? "";
     }
 
     public function setResume(string $resume): OpenArticlesLang
@@ -106,7 +106,7 @@ class OpenArticlesLang
 
     public function getDescription(): string
     {
-        return $this->description;
+        return $this->description ?? "";
     }
 
     public function setDescription(string $description): OpenArticlesLang

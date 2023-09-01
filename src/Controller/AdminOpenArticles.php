@@ -56,4 +56,27 @@ class AdminOpenArticles extends FrameworkBundleAdminController
             'articleForm' => $form->createView()
         ]);
     }
+
+    public function editAction($articleId, Request $request)
+    {
+        $formBuilder = $this->get('openarticles.form.identifiable.object.builder');
+        $form = $formBuilder->getFormFor($articleId);
+        $form->handleRequest($request);
+
+        $formHandler = $this->get('openarticles.form.identifiable.object.handler');
+        $result = $formHandler->handleFor($articleId, $form);
+
+        if (null !== $result->getIdentifiableObjectId()) {
+            $this->addFlash(
+                'success',
+                $this->trans('Successful creation.', 'Admin.Notifications.Success')
+            );
+
+            return $this->redirectToRoute('oit_article_index');
+        }
+
+        return $this->render('@Modules/openarticles/views/templates/admin/create.html.twig', [
+            'articleForm' => $form->createView()
+        ]);
+    }
 }

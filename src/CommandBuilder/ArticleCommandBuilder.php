@@ -4,12 +4,21 @@ namespace Vex6\OpenArticles\CommandBuilder;
 
 use Vex6\OpenArticles\Command\AddArticleCommand;
 use Vex6\OpenArticles\Command\ArticleCommandInterface;
+use Vex6\OpenArticles\Command\EditArticleCommand;
+use Vex6\OpenArticles\ValueObject\ArticleId;
 
 class ArticleCommandBuilder implements ArticleCommandBuilderInterface
 {
     public function buildAddCommand(array $data): AddArticleCommand
     {
         $command = new AddArticleCommand();
+        $this->build($command, $data);
+        return $command;
+    }
+
+    public function buildEditCommand(ArticleId $articleId, array $data): EditArticleCommand
+    {
+        $command = new EditArticleCommand($articleId);
         $this->build($command, $data);
         return $command;
     }

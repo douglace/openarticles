@@ -119,7 +119,7 @@ class OpenArticles
         return $this;
     }
 
-    public function getArticleLangs(): ArrayCollection
+    public function getArticleLangs()
     {
         return $this->articleLangs;
     }

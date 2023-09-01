@@ -37,3 +37,14 @@ oit_article_delete:
     _legacy_link: 'AdminOpenArticles'
   requirements:
     articleId: \d+
+
+oit_delete_image:
+  path: /{articleId}/delete/image
+  methods: [POST]
+  defaults:
+    _controller: 'Vex6\OpenArticles\Controller\AdminOpenArticles::deleteImageAction'
+    _disable_module_prefix: true
+    _legacy_controller: 'AdminOpenArticles'
+    _legacy_link: 'AdminOpenArticles'
+  requirements:
+    articleId: \d+

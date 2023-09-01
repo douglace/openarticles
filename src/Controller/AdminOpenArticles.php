@@ -2,10 +2,13 @@
 
 namespace Vex6\OpenArticles\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Vex6\OpenArticles\Exception\CannotDeleteImageArticleException;
 use Vex6\OpenArticles\Grid\Filters\ArticleFilters;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
+use Vex6\OpenArticles\Uploader\ArticleImageUploader;
 
 
 class AdminOpenArticles extends FrameworkBundleAdminController
@@ -60,7 +63,9 @@ class AdminOpenArticles extends FrameworkBundleAdminController
     public function editAction($articleId, Request $request)
     {
         $formBuilder = $this->get('openarticles.form.identifiable.object.builder');
-        $form = $formBuilder->getFormFor($articleId);
+        $form = $formBuilder->getFormFor($articleId, [
+            'articleId' => $articleId
+        ]);
         $form->handleRequest($request);
 
         $formHandler = $this->get('openarticles.form.identifiable.object.handler');
@@ -78,5 +83,63 @@ class AdminOpenArticles extends FrameworkBundleAdminController
         return $this->render('@Modules/openarticles/views/templates/admin/create.html.twig', [
             'articleForm' => $form->createView()
         ]);
+    }
+
+    /**
+     * @param int $articleId
+     * @return RedirectResponse
+     */
+    public function deleteImageAction(int $articleId): RedirectResponse
+    {
+        try {
+            $this->deleteUploadedImage($articleId);
+
+            $this->addFlash(
+                'success',
+                $this->trans('The image was successfully deleted.', 'Admin.Notifications.Success')
+            );
+        } catch (CannotDeleteImageArticleException $e) {
+            $this->addFlash('error', $this->getErrorMessageForException($e, $this->getErrorMessages()));
+        }
+
+        return $this->redirectToRoute('oit_article_edit', [
+            'articleId' => $articleId
+        ]);
+    }
+
+    /**
+     * Get translated error messages for category exceptions
+     *
+     * @return array
+     */
+    private function getErrorMessages(): array
+    {
+        return [
+            CannotDeleteImageArticleException::class => $this->trans('Unable to delete image.', 'Admin.Notifications.Error'),
+        ];
+    }
+
+    /**
+     * @param int $articleId
+     *
+     * @return void
+     * @throws CannotDeleteImageArticleException
+     */
+    private function deleteUploadedImage(int $articleId): void
+    {
+        $imgPath = _PS_MODULE_DIR_ .ArticleImageUploader::IMAGE_PATH. $articleId . '.jpg';
+
+        if (!file_exists($imgPath)) {
+            return;
+        }
+
+        if (unlink($imgPath)) {
+            return;
+        }
+
+        throw new CannotDeleteImageArticleException(sprintf(
+            'Cannot delete image with id "%s"',
+            $articleId . '.jpg'
+        ));
     }
 }

@@ -20,13 +20,22 @@ final class ArticleGridDataFactory implements GridDataFactoryInterface
      */
     private $gridDataFactory;
 
+
+    /**
+     * @var ImageProviderInterface
+     */
+    private $menLogoThumbnailProvider;
+
     /**
      * @param GridDataFactoryInterface $gridDataFactory
+     * @param ImageProviderInterface $menLogoThumbnailProvider
      */
     public function __construct(
-        GridDataFactoryInterface $gridDataFactory
+        GridDataFactoryInterface $gridDataFactory,
+        ImageProviderInterface $menLogoThumbnailProvider
     ) {
         $this->gridDataFactory = $gridDataFactory;
+        $this->menLogoThumbnailProvider = $menLogoThumbnailProvider;
     }
 
     /**
@@ -54,6 +63,12 @@ final class ArticleGridDataFactory implements GridDataFactoryInterface
      */
     private function applyModification(array $rows)
     {
+        foreach ($rows as &$row) {
+            $row['logo'] = $this->menLogoThumbnailProvider->getPath(
+                $row['article_id']
+            );
+        }
+
         return $rows;
     }
 }

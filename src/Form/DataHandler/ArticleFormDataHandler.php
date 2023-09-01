@@ -5,6 +5,8 @@ namespace Vex6\OpenArticles\Form\DataHandler;
 use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler\FormDataHandlerInterface;
 use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 use Vex6\OpenArticles\CommandBuilder\ArticleCommandBuilderInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Vex6\OpenArticles\Uploader\ArticleImageUploader;
 use Vex6\OpenArticles\ValueObject\ArticleId;
 
 class ArticleFormDataHandler implements FormDataHandlerInterface
@@ -39,6 +41,7 @@ class ArticleFormDataHandler implements FormDataHandlerInterface
     {
         $command = $this->builder->buildAddCommand($data);
         $articleId = $this->commandBus->handle($command);
+        $this->uploadImage($articleId, $data);
         return $articleId;
     }
 
@@ -52,6 +55,22 @@ class ArticleFormDataHandler implements FormDataHandlerInterface
     {
         $command = $this->builder->buildEditCommand(new ArticleId($articleId), $data);
         $articleId = $this->commandBus->handle($command);
+        $this->uploadImage($articleId, $data);
         return $articleId;
+    }
+
+    private function uploadImage(ArticleId $articleId, array $data)
+    {
+        $image = isset($data['cover_image']) && $data['cover_image']
+            ? $data['cover_image']
+            : null
+        ;
+
+        if($image == null || !($image instanceof UploadedFile)) {
+            return false;
+        }
+
+        $uploader = new ArticleImageUploader();
+        $uploader->upload($articleId->getValue(), $image);
     }
 }

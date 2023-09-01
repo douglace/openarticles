@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Vex6\OpenArticles\Grid\Definition\Factory;
 
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ImageColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\DataColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\Type\LinkRowAction; 
@@ -48,7 +49,13 @@ class ArticleDefinitionFactory extends AbstractGridDefinitionFactory
                     'with_bulk_field' => true,
                     'clickable' => false,
                 ])
-            )->add(
+            ) ->add((new ImageColumn('logo'))
+                ->setName($this->trans('Image', [], 'Admin.Global'))
+                ->setOptions([
+                    'src_field' => 'logo',
+                ])
+            )
+            ->add(
                 (new DataColumn('title'))
                     ->setName($this->trans('Titre', [], 'Modules.Openarticles.Admin'))
                     ->setOptions([

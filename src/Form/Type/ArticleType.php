@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace Vex6\OpenArticles\Form\Type;
 
 use PrestaShop\PrestaShop\Core\ConstraintValidator\Constraints\CleanHtml;
+use PrestaShopBundle\Form\Admin\Type\CustomContentType;
 use PrestaShopBundle\Form\Admin\Type\FormattedTextareaType;
 use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\TranslatableType;
 use PrestaShopBundle\Form\Admin\Type\TranslateType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vex6\OpenArticles\Repository\ArticleRepository;
+use Vex6\OpenArticles\Uploader\ArticleImageUploader;
 
 class ArticleType extends TranslatorAwareType
 {
@@ -76,8 +79,25 @@ class ArticleType extends TranslatorAwareType
                 ],
             ],
         ])->add('active', SwitchType::class, [
-            'label'   => $this->trans('Active',  'Modules.Yatpush.Admin'),
+            'label'   => $this->trans('Active',  'Modules.Openarticles.Admin'),
             'required' => false,
+        ])->add('cover_image', FileType::class, [
+                'label'    => $this->trans('Image',  'Modules.Openarticles.Admin'),
+                'required' => false,
         ]);
+
+        $id = $options['data']['articleId'] ?? null;
+
+        if ($id && file_exists(_PS_MODULE_DIR_. ArticleImageUploader::IMAGE_PATH . $id.'.jpg')) {
+            $builder
+                ->add('image_file', CustomContentType::class, [
+                    'required' => false,
+                    'template' => '@Modules/openarticles/views/templates/admin/upload_image.html.twig',
+                    'data' => [
+                        'articleId' => $id,
+                        'imageUrl' => _MODULE_DIR_ .ArticleImageUploader::IMAGE_PATH . $id.'.jpg',
+                    ],
+                ]);
+        }
     }
 }

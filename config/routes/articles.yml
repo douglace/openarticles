@@ -7,6 +7,16 @@ oit_article_index:
     _legacy_controller: 'AdminOpenArticles'
     _legacy_link: 'AdminOpenArticles'
 
+
+oit_article_search:
+  path: /
+  methods: POST
+  defaults:
+    _controller: 'Vex6\OpenArticles\Controller\AdminOpenArticles::searchAction'
+    _disable_module_prefix: true
+    _legacy_controller: 'AdminOpenArticles'
+    _legacy_link: 'AdminOpenArticles'
+
 oit_article_create:
   path: /create
   methods: [GET, POST]

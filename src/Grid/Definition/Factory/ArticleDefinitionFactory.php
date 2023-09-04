@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Vex6\OpenArticles\Grid\Definition\Factory;
 
 use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollection;
-use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollectionInterface;
 use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\Type\SubmitBulkAction;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ImageColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\PositionColumn;
@@ -19,6 +18,11 @@ use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\IdentifierColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\Factory\AbstractGridDefinitionFactory;
 use PrestaShop\PrestaShop\Core\Grid\Definition\Factory\BulkDeleteActionTrait;
+use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
+use PrestaShop\PrestaShop\Core\Grid\Filter\FilterCollection;
+use PrestaShopBundle\Form\Admin\Type\SearchAndResetType;
+use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 
 class ArticleDefinitionFactory extends AbstractGridDefinitionFactory 
@@ -129,6 +133,65 @@ class ArticleDefinitionFactory extends AbstractGridDefinitionFactory
                 ]) 
             ) 
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFilters()
+    {
+        return (new FilterCollection())
+            ->add(
+                (new Filter('article_id', TextType::class))
+                    ->setTypeOptions([
+                        'required' => false,
+                        'attr' => [
+                            'placeholder' => $this->trans('ID', [], 'Admin.Global'),
+                        ],
+                    ])
+                    ->setAssociatedColumn('article_id')
+            )->add(
+                (new Filter('title', TextType::class))
+                    ->setTypeOptions([
+                        'required' => false,
+                        'attr' => [
+                            'placeholder' => $this->trans('Titre', [], 'Admin.Global'),
+                        ],
+                    ])
+                    ->setAssociatedColumn('title')
+            )->add(
+                (new Filter('product', TextType::class))
+                    ->setTypeOptions([
+                        'required' => false,
+                        'attr' => [
+                            'placeholder' => $this->trans('Produit', [], 'Admin.Global'),
+                        ],
+                    ])
+                    ->setAssociatedColumn('product')
+            )->add(
+                (new Filter('position', TextType::class))
+                    ->setTypeOptions([
+                        'required' => false,
+                        'attr' => [
+                            'placeholder' => $this->trans('Position', [], 'Admin.Global'),
+                        ],
+                    ])
+                    ->setAssociatedColumn('position')
+            )->add(
+                (new Filter('active', YesAndNoChoiceType::class))
+                    ->setAssociatedColumn('active')
+            )->add(
+                (new Filter('actions', SearchAndResetType::class))
+                    ->setTypeOptions([
+                        'reset_route' => 'admin_common_reset_search_by_filter_id',
+                        'reset_route_params' => [
+                            'filterId' => self::GRID_ID,
+                        ],
+                        'redirect_route' => 'oit_article_search',
+                    ])
+                    ->setAssociatedColumn('actions')
+            )
+            ;
     }
 
 

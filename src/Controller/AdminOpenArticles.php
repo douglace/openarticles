@@ -3,6 +3,7 @@
 namespace Vex6\OpenArticles\Controller;
 
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
+use PrestaShopBundle\Service\Grid\ResponseBuilder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +18,7 @@ use Vex6\OpenArticles\Exception\CannotToggleArticleException;
 use Vex6\OpenArticles\Exception\CannotUpdateArticlePositionException;
 use Vex6\OpenArticles\Exception\InvalidArticleIdException;
 use Vex6\OpenArticles\Exception\InvalidBulkArticleIdException;
+use Vex6\OpenArticles\Grid\Definition\Factory\ArticleDefinitionFactory;
 use Vex6\OpenArticles\Grid\Filters\ArticleFilters;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use Vex6\OpenArticles\Query\GetArticleState;
@@ -36,6 +38,26 @@ class AdminOpenArticles extends FrameworkBundleAdminController
             'layoutTitle' => $this->trans('Liste des articles', 'Modules.Openarticles.Admin'),
             'articleGrid' => $this->presentGrid($grid),
         ]);
+    }
+
+    /**
+     * Provides filters functionality.
+     *
+     * @param Request $request
+     *
+     * @return RedirectResponse
+     */
+    public function searchAction(Request $request): RedirectResponse
+    {
+        /** @var ResponseBuilder $responseBuilder */
+        $responseBuilder = $this->get('prestashop.bundle.grid.response_builder');
+
+        return $responseBuilder->buildSearchResponse(
+            $this->get('openarticles.grid.definition.factory'),
+            $request,
+            ArticleDefinitionFactory::GRID_ID,
+            'oit_article_index'
+        );
     }
 
     public function getToolbarButtons(): array

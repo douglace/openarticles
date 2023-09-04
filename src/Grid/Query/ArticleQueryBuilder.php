@@ -115,30 +115,40 @@ class ArticleQueryBuilder extends AbstractDoctrineQueryBuilder
 
         $qb->setParameter('lang_id', $this->contextLanguageId);
 
-        
+        //dump($filterValues); die;
         foreach ($filterValues as $filterName => $filter) {
             if ('active' === $filterName) {
                 $qb->andWhere('oa.`active` = :active');
                 $qb->setParameter('active', $filter);
+                continue;
+            }
 
+            if ('position' === $filterName) {
+                $pos = (int)$filter - 1;
+                if($pos < 0) { $pos = 0; }
+                $qb->andWhere('oa.`position` = :position');
+                $qb->setParameter('position', $pos);
+                continue;
+            }
+
+            if ('product' === $filterName) {
+                $qb->andWhere('pl.`name` LIKE :productName');
+                $qb->setParameter('productName', "%".$filter."%");
+                continue;
+            }
+
+            if ('article_id' === $filterName) {
+                $qb->andWhere('oa.`id` = :articleId');
+                $qb->setParameter('articleId', $filter);
                 continue;
             }
 
             if ('title' === $filterName) {
                 $qb->andWhere('oal.`title` LIKE :title');
                 $qb->setParameter('title', '%' . $filter . '%');
-
                 continue;
             }
 
-            
-
-            if ('position' === $filterName) {
-                $qb->andWhere('oa.`position` LIKE :position');
-                $qb->setParameter('position', '%' . $filter . '%');
-
-                continue;
-            }
 
         }
 

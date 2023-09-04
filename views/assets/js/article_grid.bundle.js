@@ -12,4 +12,5 @@ $(() => {
     grid.addExtension(new window.prestashop.component.GridExtensions.PositionExtension());
     grid.addExtension(new window.prestashop.component.GridExtensions.SortingExtension());
 
+    grid.addExtension(new window.prestashop.component.GridExtensions.FiltersResetExtension());
 });

@@ -48,3 +48,11 @@ oit_delete_image:
     _legacy_link: 'AdminOpenArticles'
   requirements:
     articleId: \d+
+
+oit_delete_bulk:
+  path: /delete-bulk
+  methods: POST
+  defaults:
+    _controller: 'Vex6\OpenArticles\Controller\AdminOpenArticles::deleteBulkAction'
+    _legacy_controller: AdminOpenArticles
+    _legacy_link: AdminOpenArticles

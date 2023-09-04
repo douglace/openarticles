@@ -9,3 +9,9 @@
         </div>
     {% endblock %}
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('../modules/openarticles/views/assets/js/article_grid.bundle.js') }}"></script>
+{% endblock %}

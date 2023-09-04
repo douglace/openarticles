@@ -5,7 +5,11 @@ namespace Vex6\OpenArticles\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Vex6\OpenArticles\Command\BulkDeleteArticleCommand;
+use Vex6\OpenArticles\Command\DeleteArticleCommand;
 use Vex6\OpenArticles\Exception\CannotDeleteImageArticleException;
+use Vex6\OpenArticles\Exception\InvalidArticleIdException;
+use Vex6\OpenArticles\Exception\InvalidBulkArticleIdException;
 use Vex6\OpenArticles\Grid\Filters\ArticleFilters;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use Vex6\OpenArticles\Uploader\ArticleImageUploader;
@@ -84,6 +88,74 @@ class AdminOpenArticles extends FrameworkBundleAdminController
             'articleForm' => $form->createView()
         ]);
     }
+
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     * @throws CannotDeleteImageArticleException
+     * @throws InvalidBulkArticleIdException
+     */
+    public function deleteBulkAction(Request $request)
+    {
+        $articleToDelete = $request->request->get('open_article_article_id');
+
+        try {
+            if(!empty($articleToDelete)) {
+                $articleToDelete = array_map(function ($item) { return (int) $item; }, $articleToDelete);
+
+                $this->getCommandBus()->handle(
+                    new BulkDeleteArticleCommand($articleToDelete)
+                );
+
+                foreach($articleToDelete as $id)
+                {
+                    $this->deleteUploadedImage($id);
+                }
+
+                $this->addFlash(
+                    'success',
+                    $this->trans('The items has been successfully delete.', 'Admin.Notifications.Success')
+                );
+            }
+
+        } catch (InvalidArticleIdException $exception) {
+            $this->addFlash(
+                'error',
+                $this->getErrorMessageForException($exception, $this->getErrorMessages())
+            );
+        }
+
+        return $this->redirectToRoute('oit_article_index');
+
+    }
+
+    /**
+     * @param $articleId
+     * @param Request $request
+     * @return RedirectResponse
+     * @throws CannotDeleteImageArticleException|InvalidArticleIdException
+     */
+    public function deleteAction($articleId, Request $request): RedirectResponse
+    {
+        $res = $this->getCommandBus()->handle(new DeleteArticleCommand((int) $articleId));
+
+        if ($res)
+        {
+            $this->deleteUploadedImage($articleId);
+            $this->addFlash(
+                'success',
+                $this->trans('Successful deletion.', 'Admin.Notifications.Success')
+            );
+        } else {
+            $this->addFlash(
+                'error',
+                $this->trans('Something wen wrong.', 'Admin.Notifications.Success')
+            );
+        }
+
+        return $this->redirectToRoute('oit_article_index');
+    }
+
 
     /**
      * @param int $articleId

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Vex6\OpenArticles\Grid\Definition\Factory;
 
+use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollection;
+use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollectionInterface;
+use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\Type\SubmitBulkAction;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ImageColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\DataColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
@@ -13,10 +16,12 @@ use PrestaShop\PrestaShop\Core\Grid\Action\Row\Type\SubmitRowAction;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\IdentifierColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\Factory\AbstractGridDefinitionFactory;
+use PrestaShop\PrestaShop\Core\Grid\Definition\Factory\BulkDeleteActionTrait;
 
 
 class ArticleDefinitionFactory extends AbstractGridDefinitionFactory 
 {
+    use BulkDeleteActionTrait;
     const GRID_ID = 'open_article';
 
     /**
@@ -101,5 +106,18 @@ class ArticleDefinitionFactory extends AbstractGridDefinitionFactory
                 ]) 
             ) 
         ;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getBulkActions()
+    {
+        return (new BulkActionCollection())
+            ->add(
+                $this->buildBulkDeleteAction('oit_delete_bulk')
+            )
+            ;
     }
 }

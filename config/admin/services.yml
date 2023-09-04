@@ -70,7 +70,7 @@ services:
       - '@openarticles.repository.article_repository'
 
 
-  # FORM HANDLER
+  # COMMAND HANDLER
 
   openarticles.command.builder.article:
     class: 'Vex6\OpenArticles\CommandBuilder\ArticleCommandBuilder'
@@ -103,6 +103,23 @@ services:
       - '@doctrine.orm.default_entity_manager'
     tags:
       - { name: 'tactician.handler', command: 'Vex6\OpenArticles\Command\EditArticleCommand' }
+
+  openarticles.command.handler.delete_push:
+    class: 'Vex6\OpenArticles\CommandHandler\DeleteArticleCommandHandler'
+    arguments:
+      - '@openarticles.repository.article_repository'
+      - '@doctrine.orm.default_entity_manager'
+    tags:
+      - { name: 'tactician.handler', command: 'Vex6\OpenArticles\Command\DeleteArticleCommand' }
+
+  openarticles.command_handler.bulk_delete_push_handler:
+    class: Vex6\OpenArticles\CommandHandler\BulkDeleteArticleCommandHandler
+    arguments:
+      - '@openarticles.repository.article_repository'
+      - '@doctrine.orm.default_entity_manager'
+    tags:
+      - name: tactician.handler
+        command: Vex6\OpenArticles\Command\BulkDeleteArticleCommand
 
   # REPOSITORY
 

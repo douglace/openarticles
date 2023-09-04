@@ -46,7 +46,9 @@ final class EditArticleCommandHandler implements EditArticleCommandHandlerInterf
     }
 
     /**
-     * @throws InvalidArticleIdException
+     * @param EditArticleCommand $command
+     * @return ArticleId
+     * @throws CannotUpdateArticleException
      */
     public function handle(EditArticleCommand $command): ArticleId
     {
@@ -59,6 +61,7 @@ final class EditArticleCommandHandler implements EditArticleCommandHandlerInterf
      * @param OpenArticlesEntity $article
      * @param EditArticleCommand $command
      * @return void
+     * @throws CannotUpdateArticleException
      */
     protected function updateArticleFromCommand(OpenArticlesEntity $article, EditArticleCommand $command)
     {

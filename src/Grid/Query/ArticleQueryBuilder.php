@@ -54,7 +54,7 @@ class ArticleQueryBuilder extends AbstractDoctrineQueryBuilder
         $qb = $this->getQueryBuilder($searchCriteria->getFilters());
         $qb
             ->select('oa.`id` article_id, oa.`position`, oa.`active`, 1 logo')
-            ->addSelect('oal.`lang_id`, oal.`title`')
+            ->addSelect('oal.`lang_id`, oal.`title`, oal.`description`, oal.`resume`')
             ->addSelect('pl.`name` product')
         ;
 

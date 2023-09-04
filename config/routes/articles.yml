@@ -101,3 +101,11 @@ oit_update_positions:
     _controller: 'Vex6\OpenArticles\Controller\AdminOpenArticles::updatePositionsAction'
     _legacy_controller: AdminOpenArticles
     _legacy_link: 'AdminOpenArticles'
+
+oit_article_export:
+  path: /export
+  methods: [GET]
+  defaults:
+    _controller: Vex6\OpenArticles\Controller\AdminOpenArticles::exportAction
+    _legacy_controller: AdminOpenArticles
+    _legacy_link: AdminOpenArticles

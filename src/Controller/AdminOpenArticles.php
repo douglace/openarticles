@@ -2,6 +2,7 @@
 
 namespace Vex6\OpenArticles\Controller;
 
+use PrestaShopBundle\Component\CsvResponse;
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
 use PrestaShopBundle\Service\Grid\ResponseBuilder;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -59,6 +60,8 @@ class AdminOpenArticles extends FrameworkBundleAdminController
             'oit_article_index'
         );
     }
+
+
 
     public function getToolbarButtons(): array
     {
@@ -344,6 +347,43 @@ class AdminOpenArticles extends FrameworkBundleAdminController
         }
 
         return $this->json($response);
+    }
+
+    public function exportAction(ArticleFilters $filters): CsvResponse
+    {
+        $filters = new ArticleFilters(['limit' => null] + $filters->all());
+        $articleGridFactory = $this->get('openarticles.grid.grid_factory');
+        $articleGrid = $articleGridFactory->getGrid($filters);
+
+        $headers = [
+            'articleId' => $this->trans('ID', 'Admin.Global'),
+            'langId' => $this->trans('Langue', 'Admin.Global'),
+            'title' => $this->trans('Titre', 'Admin.Global'),
+            'resume' => $this->trans('Résume', 'Admin.Global'),
+            'description' => $this->trans('Description', 'Admin.Global'),
+            'position' => $this->trans('Position', 'Admin.Global'),
+            'active' => $this->trans('Displayed', 'Admin.Global'),
+        ];
+
+        $data = [];
+
+        foreach ($articleGrid->getData()->getRecords()->all() as $record) {
+
+            $data[] = [
+                'articleId' => $record['article_id'],
+                'langId' => $record['lang_id'],
+                'title' => $record['title'],
+                'resume' => $record['resume'],
+                'description' => $record['description'],
+                'position' => $record['position'],
+                'active' => $record['active'],
+            ];
+        }
+
+        return (new CsvResponse())
+            ->setData($data)
+            ->setHeadersData($headers)
+            ->setFileName('oit_article_' . date('Y-m-d_His') . '.csv');
     }
 
     /**

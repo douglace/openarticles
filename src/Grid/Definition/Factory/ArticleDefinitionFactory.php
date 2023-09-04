@@ -6,6 +6,9 @@ namespace Vex6\OpenArticles\Grid\Definition\Factory;
 
 use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollection;
 use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\Type\SubmitBulkAction;
+use PrestaShop\PrestaShop\Core\Grid\Action\GridActionCollection;
+use PrestaShop\PrestaShop\Core\Grid\Action\Type\LinkGridAction;
+use PrestaShop\PrestaShop\Core\Grid\Action\Type\SimpleGridAction;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ImageColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\PositionColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
@@ -23,11 +26,15 @@ use PrestaShop\PrestaShop\Core\Grid\Filter\FilterCollection;
 use PrestaShopBundle\Form\Admin\Type\SearchAndResetType;
 use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use PrestaShop\PrestaShop\Core\Grid\Definition\Factory\DeleteActionTrait;
+
 
 
 class ArticleDefinitionFactory extends AbstractGridDefinitionFactory 
 {
     use BulkDeleteActionTrait;
+    use DeleteActionTrait;
+
     const GRID_ID = 'open_article';
 
     /**
@@ -133,6 +140,35 @@ class ArticleDefinitionFactory extends AbstractGridDefinitionFactory
                 ]) 
             ) 
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getGridActions()
+    {
+        return (new GridActionCollection())
+            ->add(
+                (new LinkGridAction('export'))
+                    ->setName($this->trans('Export', [], 'Admin.Actions'))
+                    ->setIcon('cloud_download')
+                    ->setOptions([
+                        'route' => 'oit_article_export',
+                    ])
+            )
+            ->add((new SimpleGridAction('common_refresh_list'))
+                ->setName($this->trans('Refresh list', [], 'Admin.Advparameters.Feature'))
+                ->setIcon('refresh')
+            )
+            ->add((new SimpleGridAction('common_show_query'))
+                ->setName($this->trans('Show SQL query', [], 'Admin.Actions'))
+                ->setIcon('code')
+            )
+            ->add((new SimpleGridAction('common_export_sql_manager'))
+                ->setName($this->trans('Export to SQL Manager', [], 'Admin.Actions'))
+                ->setIcon('storage')
+            )
+            ;
     }
 
     /**

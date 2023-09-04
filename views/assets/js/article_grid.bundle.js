@@ -13,4 +13,7 @@ $(() => {
     grid.addExtension(new window.prestashop.component.GridExtensions.SortingExtension());
 
     grid.addExtension(new window.prestashop.component.GridExtensions.FiltersResetExtension());
+
+    grid.addExtension(new window.prestashop.component.GridExtensions.ExportToSqlManagerExtension());
+    grid.addExtension(new window.prestashop.component.GridExtensions.ReloadListExtension());
 });

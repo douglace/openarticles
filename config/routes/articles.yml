@@ -83,3 +83,11 @@ oit_bulk_status_enable:
     _controller: 'Vex6\OpenArticles\Controller\AdminOpenArticles::bulkStatusEnableAction'
     _legacy_controller: 'AdminOpenArticles'
     _legacy_link: 'AdminOpenArticles'
+
+oit_update_positions:
+  path: /update-positions
+  methods: [POST]
+  defaults:
+    _controller: 'Vex6\OpenArticles\Controller\AdminOpenArticles::updatePositionsAction'
+    _legacy_controller: AdminOpenArticles
+    _legacy_link: 'AdminOpenArticles'

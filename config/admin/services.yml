@@ -147,6 +147,15 @@ services:
       - name: tactician.handler
         command: Vex6\OpenArticles\Command\BulkDisableArticleCommand
 
+  openarticles.command_handler.update_article_position_handler:
+    class: Vex6\OpenArticles\CommandHandler\UpdateArticlePositionCommandHandler
+    arguments:
+      - '@openarticles.repository.article_repository'
+      - '@doctrine.orm.default_entity_manager'
+    tags:
+      - name: tactician.handler
+        command: Vex6\OpenArticles\Command\UpdateArticlePositionCommand
+
   # Query handler
 
   openarticles.query.handler.toggle.article:

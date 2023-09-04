@@ -11,8 +11,10 @@ use Vex6\OpenArticles\Command\BulkDisableArticleCommand;
 use Vex6\OpenArticles\Command\BulkEnableArticleCommand;
 use Vex6\OpenArticles\Command\DeleteArticleCommand;
 use Vex6\OpenArticles\Command\ToggleArticleCommand;
+use Vex6\OpenArticles\Command\UpdateArticlePositionCommand;
 use Vex6\OpenArticles\Exception\CannotDeleteImageArticleException;
 use Vex6\OpenArticles\Exception\CannotToggleArticleException;
+use Vex6\OpenArticles\Exception\CannotUpdateArticlePositionException;
 use Vex6\OpenArticles\Exception\InvalidArticleIdException;
 use Vex6\OpenArticles\Exception\InvalidBulkArticleIdException;
 use Vex6\OpenArticles\Grid\Filters\ArticleFilters;
@@ -252,6 +254,39 @@ class AdminOpenArticles extends FrameworkBundleAdminController
         return $this->redirectToRoute('oit_article_index');
     }
 
+    /**
+     * @AdminSecurity("is_granted('update', request.get('_legacy_controller'))", message="Access denied.")
+     *
+     * @param Request $request
+     *
+     * @throws \Exception
+     *
+     * @return RedirectResponse
+     */
+    public function updatePositionsAction(Request $request)
+    {
+        $positionsData = [
+            'positions' => $request->request->get('positions', null),
+        ];
+
+
+        try {
+            $this->getCommandBus()->handle(
+                new UpdateArticlePositionCommand($positionsData)
+            );
+
+            $this->addFlash('success', $this->trans('Successful update.', 'Admin.Notifications.Success'));
+        } catch (CannotUpdateArticlePositionException $e) {
+            $this->addFlash(
+                'error',
+                $this->getErrorMessageForException($e, $this->getErrorMessages())
+            );
+        }
+
+        return $this->redirectToRoute('oit_article_index');
+    }
+
+
 
     /**
      * Toggle category status.
@@ -299,6 +334,7 @@ class AdminOpenArticles extends FrameworkBundleAdminController
         return [
             CannotDeleteImageArticleException::class => $this->trans('Unable to delete image.', 'Admin.Notifications.Error'),
             CannotToggleArticleException::class => $this->trans('Unable to toggle Article status.', 'Admin.Notifications.Error'),
+            CannotUpdateArticlePositionException::class => $this->trans('Unable to update Article position.', 'Admin.Notifications.Error'),
         ];
     }
 

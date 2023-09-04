@@ -8,6 +8,7 @@ use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollection;
 use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollectionInterface;
 use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\Type\SubmitBulkAction;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ImageColumn;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\PositionColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\DataColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
@@ -82,6 +83,18 @@ class ArticleDefinitionFactory extends AbstractGridDefinitionFactory
                         'route' => 'oit_toggle_status',
                         'route_param_name' => 'articleId',
                     ])
+            )->add(
+                (new PositionColumn('position'))
+                    ->setName($this->trans('Position', [], 'Admin.Global'))
+                    ->setOptions([
+                        'id_field' => 'article_id',
+                        'position_field' => 'position',
+                        'update_route' => 'oit_update_positions',
+                        'update_method' => 'POST',
+                        'record_route_params' => [
+                            'article_id' => 'articleId',
+                        ],
+                    ])
             ) ->add(
                 (new ActionColumn('actions')) 
                 ->setName($this->trans('Actions', [], 'Admin.Global')) 
@@ -97,7 +110,7 @@ class ArticleDefinitionFactory extends AbstractGridDefinitionFactory
                             'route_param_field' => 'article_id', 
                             'clickable_row' => true, 
                         ]) 
-                    ) 
+                    )
                     ->add( 
                         (new SubmitRowAction('delete')) 
                         ->setName($this->trans('Delete', [], 'Admin.Actions')) 

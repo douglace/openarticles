@@ -44,7 +44,7 @@ final class BulkDeleteArticleCommandHandler implements BulkDeleteArticleCommandH
                 ]);
 
                 if(!$entity) {
-                    throw new InvalidArticleIdException(sprintf('Article object with id "%s" has not been found for enabling status.', $articleId->getValue()));
+                    throw new InvalidArticleIdException(sprintf('Article object with id "%s" has not been found for delete.', $articleId->getValue()));
                 }
 
                 $this->entityManager->remove($entity);
@@ -52,7 +52,7 @@ final class BulkDeleteArticleCommandHandler implements BulkDeleteArticleCommandH
 
             }
         } catch (Exception $e) {
-            throw new InvalidArticleIdException('Unexpected error occurred when handling bulk Delete push', 0, $e);
+            throw new InvalidArticleIdException('Unexpected error occurred when handling bulk Delete article', 0, $e);
         }
     }
 }

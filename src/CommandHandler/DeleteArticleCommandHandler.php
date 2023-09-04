@@ -3,10 +3,8 @@
 namespace Vex6\OpenArticles\CommandHandler;
 
 use Doctrine\ORM\EntityManagerInterface;
-use PrestaShopBundle\Entity\Repository\LangRepository;
 use Vex6\OpenArticles\Command\DeleteArticleCommand;
 use Vex6\OpenArticles\Exception\CannotDeleteArticleException;
-use Vex6\OpenArticles\Exception\CannotDeleteImageArticleException;
 use Vex6\OpenArticles\Repository\ArticleRepository;
 
 final class DeleteArticleCommandHandler implements DeleteArticleCommandHandlerInterface
@@ -49,8 +47,8 @@ final class DeleteArticleCommandHandler implements DeleteArticleCommandHandlerIn
             }
 
             return true;
-        } catch(CannotDeleteArticleException $e) {
-            throw new CannotDeleteArticleException('An error occured durring delete push');
+        } catch(\Exception $e) {
+            throw new CannotDeleteArticleException('An error occured durring delete article');
         }
     }
 }

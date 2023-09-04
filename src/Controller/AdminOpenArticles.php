@@ -2,16 +2,22 @@
 
 namespace Vex6\OpenArticles\Controller;
 
+use PrestaShopBundle\Security\Annotation\AdminSecurity;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Vex6\OpenArticles\Command\BulkDeleteArticleCommand;
+use Vex6\OpenArticles\Command\BulkDisableArticleCommand;
+use Vex6\OpenArticles\Command\BulkEnableArticleCommand;
 use Vex6\OpenArticles\Command\DeleteArticleCommand;
+use Vex6\OpenArticles\Command\ToggleArticleCommand;
 use Vex6\OpenArticles\Exception\CannotDeleteImageArticleException;
+use Vex6\OpenArticles\Exception\CannotToggleArticleException;
 use Vex6\OpenArticles\Exception\InvalidArticleIdException;
 use Vex6\OpenArticles\Exception\InvalidBulkArticleIdException;
 use Vex6\OpenArticles\Grid\Filters\ArticleFilters;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
+use Vex6\OpenArticles\Query\GetArticleState;
 use Vex6\OpenArticles\Uploader\ArticleImageUploader;
 
 
@@ -180,6 +186,110 @@ class AdminOpenArticles extends FrameworkBundleAdminController
     }
 
     /**
+     * Changes multiple article statuses to enabled.
+     *
+     *
+     * @param Request $request
+     *
+     * @return RedirectResponse
+     */
+    public function bulkStatusEnableAction(Request $request): RedirectResponse
+    {
+        $articlesToEnable = $request->request->get('open_article_article_id');
+
+        try {
+            $articlesToEnable = array_map(function ($item) { return (int) $item; }, $articlesToEnable);
+
+            $this->getCommandBus()->handle(
+                new BulkEnableArticleCommand($articlesToEnable)
+            );
+
+            $this->addFlash(
+                'success',
+                $this->trans('The status has been successfully updated.', 'Admin.Notifications.Success')
+            );
+        } catch (InvalidArticleIdException|InvalidBulkArticleIdException $e) {
+            $this->addFlash(
+                'error',
+                $this->getErrorMessageForException($e, $this->getErrorMessages())
+            );
+        }
+
+        return $this->redirectToRoute('oit_article_index');
+
+    }
+
+    /**
+     * Changes multiple articles statuses to disable.
+     *
+     *
+     * @param Request $request
+     *
+     * @return RedirectResponse
+     */
+    public function bulkStatusDisableAction(Request $request): RedirectResponse
+    {
+        $articlesToDisable = $request->request->get('open_article_article_id');
+
+        try {
+            $articlesToDisable = array_map(function ($item) { return (int) $item; }, $articlesToDisable);
+
+            $this->getCommandBus()->handle(
+                new BulkDisableArticleCommand($articlesToDisable)
+            );
+
+            $this->addFlash(
+                'success',
+                $this->trans('The status has been successfully updated.', 'Admin.Notifications.Success')
+            );
+        }  catch (InvalidArticleIdException|InvalidBulkArticleIdException $e) {
+            $this->addFlash(
+                'error',
+                $this->getErrorMessageForException($e, $this->getErrorMessages())
+            );
+        }
+
+        return $this->redirectToRoute('oit_article_index');
+    }
+
+
+    /**
+     * Toggle category status.
+     *
+     * @AdminSecurity(
+     *     "is_granted(['update'], request.get('_legacy_controller'))",
+     *     message="You do not have permission to update this."
+     * )
+     *
+     * @param int $articleId
+     *
+     * @return JsonResponse
+     */
+    public function toggleAction(int $articleId): JsonResponse
+    {
+
+        try {
+            $isEnabled = $this->getQueryBus()->handle(new GetArticleState((int) $articleId));
+
+            $this->getCommandBus()->handle(
+                new ToggleArticleCommand((int) $articleId, !$isEnabled)
+            );
+
+            $response = [
+                'status' => true,
+                'message' => $this->trans('The status has been successfully updated.', 'Admin.Notifications.Success'),
+            ];
+        } catch (CannotToggleArticleException|InvalidArticleIdException $e) {
+            $response = [
+                'status' => false,
+                'message' => $this->getErrorMessageForException($e, $this->getErrorMessages()),
+            ];
+        }
+
+        return $this->json($response);
+    }
+
+    /**
      * Get translated error messages for category exceptions
      *
      * @return array
@@ -188,6 +298,7 @@ class AdminOpenArticles extends FrameworkBundleAdminController
     {
         return [
             CannotDeleteImageArticleException::class => $this->trans('Unable to delete image.', 'Admin.Notifications.Error'),
+            CannotToggleArticleException::class => $this->trans('Unable to toggle Article status.', 'Admin.Notifications.Error'),
         ];
     }
 

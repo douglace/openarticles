@@ -104,7 +104,7 @@ services:
     tags:
       - { name: 'tactician.handler', command: 'Vex6\OpenArticles\Command\EditArticleCommand' }
 
-  openarticles.command.handler.delete_push:
+  openarticles.command.handler.delete_article:
     class: 'Vex6\OpenArticles\CommandHandler\DeleteArticleCommandHandler'
     arguments:
       - '@openarticles.repository.article_repository'
@@ -112,7 +112,7 @@ services:
     tags:
       - { name: 'tactician.handler', command: 'Vex6\OpenArticles\Command\DeleteArticleCommand' }
 
-  openarticles.command_handler.bulk_delete_push_handler:
+  openarticles.command_handler.bulk_delete_article_handler:
     class: Vex6\OpenArticles\CommandHandler\BulkDeleteArticleCommandHandler
     arguments:
       - '@openarticles.repository.article_repository'
@@ -120,6 +120,42 @@ services:
     tags:
       - name: tactician.handler
         command: Vex6\OpenArticles\Command\BulkDeleteArticleCommand
+
+  openarticles.command.handler.toggle_article:
+    class: 'Vex6\OpenArticles\CommandHandler\ToggleArticleCommandHandler'
+    arguments:
+      - '@openarticles.repository.article_repository'
+      - '@doctrine.orm.default_entity_manager'
+    tags:
+      - { name: 'tactician.handler', command: 'Vex6\OpenArticles\Command\ToggleArticleCommand' }
+
+  openarticles.command_handler.bulk_enable_article_handler:
+    class: Vex6\OpenArticles\CommandHandler\BulkEnableArticleCommandHandler
+    arguments:
+      - '@openarticles.repository.article_repository'
+      - '@doctrine.orm.default_entity_manager'
+    tags:
+      - name: tactician.handler
+        command: Vex6\OpenArticles\Command\BulkEnableArticleCommand
+
+  openarticles.command_handler.bulk_disable_article_handler:
+    class: Vex6\OpenArticles\CommandHandler\BulkDisableArticleCommandHandler
+    arguments:
+      - '@openarticles.repository.article_repository'
+      - '@doctrine.orm.default_entity_manager'
+    tags:
+      - name: tactician.handler
+        command: Vex6\OpenArticles\Command\BulkDisableArticleCommand
+
+  # Query handler
+
+  openarticles.query.handler.toggle.article:
+    class: Vex6\OpenArticles\QueryHandler\GetArticleStateHandler
+    arguments:
+      - '@openarticles.repository.article_repository'
+    tags:
+      - name: tactician.handler
+        command: Vex6\OpenArticles\Query\GetArticleState
 
   # REPOSITORY
 

@@ -8,6 +8,7 @@ use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollection;
 use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollectionInterface;
 use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\Type\SubmitBulkAction;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ImageColumn;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\DataColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\Type\LinkRowAction; 
@@ -72,7 +73,16 @@ class ArticleDefinitionFactory extends AbstractGridDefinitionFactory
                     ->setOptions([
                         'field' => 'product',
                 ])
-            )->add( 
+            )->add(
+                (new ToggleColumn('active'))
+                    ->setName($this->trans('Displayed', [], 'Admin.Global'))
+                    ->setOptions([
+                        'field' => 'active',
+                        'primary_field' => 'article_id',
+                        'route' => 'oit_toggle_status',
+                        'route_param_name' => 'articleId',
+                    ])
+            ) ->add(
                 (new ActionColumn('actions')) 
                 ->setName($this->trans('Actions', [], 'Admin.Global')) 
                 ->setOptions([ 
@@ -115,6 +125,18 @@ class ArticleDefinitionFactory extends AbstractGridDefinitionFactory
     protected function getBulkActions()
     {
         return (new BulkActionCollection())
+            ->add((new SubmitBulkAction('enable_selection'))
+                ->setName($this->trans('Enable selection', [], 'Admin.Actions'))
+                ->setOptions([
+                    'submit_route' => 'oit_bulk_status_enable',
+                ])
+            )
+            ->add((new SubmitBulkAction('disable_selection'))
+                ->setName($this->trans('Disable selection', [], 'Admin.Actions'))
+                ->setOptions([
+                    'submit_route' => 'oit_bulk_status_disable',
+                ])
+            )
             ->add(
                 $this->buildBulkDeleteAction('oit_delete_bulk')
             )

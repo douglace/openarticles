@@ -56,3 +56,30 @@ oit_delete_bulk:
     _controller: 'Vex6\OpenArticles\Controller\AdminOpenArticles::deleteBulkAction'
     _legacy_controller: AdminOpenArticles
     _legacy_link: AdminOpenArticles
+
+oit_toggle_status:
+  path: /{articleId}/toggle-status
+  methods: [GET, POST]
+  defaults:
+    _controller: Vex6\OpenArticles\Controller\AdminOpenArticles::toggleAction
+    _disable_module_prefix: true
+    _legacy_controller: 'AdminOpenArticles'
+    _legacy_link: 'AdminOpenArticles'
+  requirements:
+    articleId: \d+
+
+oit_bulk_status_disable:
+  path: /bulk-disable-status
+  methods: [POST]
+  defaults:
+    _controller: 'Vex6\OpenArticles\Controller\AdminOpenArticles::bulkStatusDisableAction'
+    _legacy_controller: AdminOpenArticles
+    _legacy_link: AdminOpenArticles
+
+oit_bulk_status_enable:
+  path: /bulk-enable-status
+  methods: [POST]
+  defaults:
+    _controller: 'Vex6\OpenArticles\Controller\AdminOpenArticles::bulkStatusEnableAction'
+    _legacy_controller: 'AdminOpenArticles'
+    _legacy_link: 'AdminOpenArticles'

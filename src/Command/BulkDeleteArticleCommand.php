@@ -2,7 +2,7 @@
 
 namespace Vex6\OpenArticles\Command;
 
-class BulkDeleteArticleCommand extends AbstractBulkArticleCommand
+final class BulkDeleteArticleCommand extends AbstractBulkArticleCommand
 {
 
 }

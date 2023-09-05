@@ -46,7 +46,7 @@ services:
     arguments:
       - '@prestashop.core.image.parser.image_tag_source_parser'
 
- # FORM
+ # FORM TYPE
 
   openarticles.type.article:
     class: 'Vex6\OpenArticles\Form\Type\ArticleType'
@@ -56,6 +56,15 @@ services:
       - '@openarticles.repository.article_repository'
     tags:
       - { name: form.type }
+
+  openarticles.type.article.configuration:
+    class: 'Vex6\OpenArticles\Form\Type\ConfigurationType'
+    parent: 'form.type.translatable.aware'
+    public: true
+    tags:
+      - { name: form.type }
+
+  # FORM
 
   openarticles.form.identifiable.object.builder:
     class: 'PrestaShop\PrestaShop\Core\Form\IdentifiableObject\Builder\FormBuilder'
@@ -69,6 +78,25 @@ services:
     arguments:
       - '@openarticles.repository.article_repository'
 
+  # FORM CONFIGURATION
+
+  openarticles.form.configuration_data_handler:
+    class: 'PrestaShop\PrestaShop\Core\Form\Handler'
+    arguments:
+      - '@form.factory'
+      - '@prestashop.core.hook.dispatcher'
+      - '@openarticles.form.configuration_data_provider'
+      - 'Vex6\OpenArticles\Form\Type\ConfigurationType'
+      - 'Configuration'
+
+  openarticles.form.configuration_data_provider:
+    class: 'Vex6\OpenArticles\Form\Provider\ConfigurationFormDataProvider'
+    arguments:
+      - '@openarticles.form.configuration'
+
+  openarticles.form.configuration:
+    class: Vex6\OpenArticles\Form\Data\ConfigurationFormData
+    arguments: [ '@prestashop.adapter.legacy.configuration' ]
 
   # COMMAND HANDLER
 

@@ -33,11 +33,30 @@ class AdminOpenArticles extends FrameworkBundleAdminController
         $gridFactory = $this->get('openarticles.grid.grid_factory');
         $grid = $gridFactory->getGrid($filters);
 
+        $configFormDataHandler = $this->get('openarticles.form.configuration_data_handler');
+        $configForm = $configFormDataHandler->getForm();
+        $configForm->handleRequest($request);
+        //dump($request->get(''));die;
+
+        if ($configForm->isSubmitted() && $configForm->isValid()) {
+            /** You can return array of errors in form handler and they can be displayed to user with flashErrors */
+            $errors = $configFormDataHandler->save($configForm->getData());
+
+            if (empty($errors)) {
+                $this->addFlash('success', $this->trans('Successful update.', 'Admin.Notifications.Success'));
+
+                return $this->redirectToRoute('oit_article_index');
+            }
+
+            $this->flashErrors($errors);
+        }
+
         return $this->render('@Modules/openarticles/views/templates/admin/article.html.twig', [
             'enableSidebar' => true,
             'layoutHeaderToolbarBtn' => $this->getToolbarButtons(),
             'layoutTitle' => $this->trans('Liste des articles', 'Modules.Openarticles.Admin'),
             'articleGrid' => $this->presentGrid($grid),
+            'configForm' => $configForm->createView(),
         ]);
     }
 

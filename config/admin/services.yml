@@ -1,3 +1,6 @@
+imports:
+  - { resource: ../common.yml }
+
 services:
   _defaults:
     public: true
@@ -194,10 +197,3 @@ services:
       - name: tactician.handler
         command: Vex6\OpenArticles\Query\GetArticleState
 
-  # REPOSITORY
-
-  openarticles.repository.article_repository:
-    class: Vex6\OpenArticles\Repository\ArticleRepository
-    factory: [ '@doctrine.orm.default_entity_manager', getRepository ]
-    arguments:
-      - Vex6\OpenArticles\Entity\OpenArticles

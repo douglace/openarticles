@@ -80,9 +80,8 @@ class Installer
     public function registerHooks(Module $module): bool
     {
         $hooks = [
-            'displayHome',
             'moduleRoutes',
-            'displayBackOfficeHeader',
+            'displayHeader'
         ];
 
         return (bool) $module->registerHook($hooks);

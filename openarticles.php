@@ -76,11 +76,33 @@ class Openarticles extends Module implements WidgetInterface
         Tools::redirectAdmin(
             SymfonyContainer::getInstance()
                 ->get('router')
-                ->generate('yhc_men')
+                ->generate('oit_article_index')
         );
     }
 
-    public function hookModuleRoutes($params) {
+    public function hookModuleRoutes($params){
+        return [
+            'module-openarticles-articles' => [
+                'controller' => 'articles',
+                'rule' => 'oit/articles/',
+                'keywords' => [],
+                'params' => [
+                    'fc' => 'module',
+                    'module' => 'openarticles'
+                ]
+            ],
+            'module-openarticles-article' => [
+                'controller' => 'article',
+                'rule' => 'oit/article/{articleId}',
+                'keywords' => [
+                    'articleId' => array('regexp' => '[0-9]+', 'param' => 'articleId'),
+                ],
+                'params' => [
+                    'fc' => 'module',
+                    'module' => 'openarticles'
+                ]
+            ],
+        ];
 
     }
 
@@ -121,14 +143,17 @@ class Openarticles extends Module implements WidgetInterface
 
         return [
             'articles' => $articles,
-            'title' => $title
+            'title' => $title,
+            'all_article_link' => $this->context->link->getModuleLink($this->name, 'articles'),
         ];
     }
 
     public function hookDisplayHeader()
     {
-
-        if (isset($this->context->controller->php_self) && $this->context->controller->php_self == 'index') {
+        if (
+            Tools::getValue("module") == "openarticles" ||
+            (isset($this->context->controller->php_self) && $this->context->controller->php_self == 'index')
+        ) {
             $this->context->controller->registerStylesheet('modules-openarticle', 'modules/' . $this->name . '/views/assets/css/articles.css');
         }
     }

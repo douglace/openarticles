@@ -11,6 +11,7 @@ use PrestaShopBundle\Entity\Repository\LangRepository;
 use Vex6\OpenArticles\Entity\OpenArticlesLang;
 use Vex6\OpenArticles\Exception\CannotAddArticleException;
 use Vex6\OpenArticles\Exception\InvalidArticleIdException;
+use Vex6\OpenArticles\Repository\ArticleRepository;
 use Vex6\OpenArticles\ValueObject\ArticleId;
 
 final class AddArticleCommandHandler implements AddArticleCommandHandlerInterface
@@ -26,9 +27,15 @@ final class AddArticleCommandHandler implements AddArticleCommandHandlerInterfac
      */
     public $entityManager;
 
-    public function __construct(LangRepository $langRepository, EntityManagerInterface $entityManager)
+    /**
+     * @param LangRepository $langRepository
+     * @param ArticleRepository $repository
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(LangRepository $langRepository, ArticleRepository $repository, EntityManagerInterface $entityManager)
     {
         $this->langRepository = $langRepository;
+        $this->repository = $repository;
         $this->entityManager = $entityManager;
     }
 
@@ -51,7 +58,7 @@ final class AddArticleCommandHandler implements AddArticleCommandHandlerInterfac
     {
         try {
             $article->setActive((bool)$command->getActive());
-            $article->setPosition((int)$command->getPosition());
+            $article->setPosition((int)$this->repository->getNexPosition());
             $article->setProductId((int)$command->getProductId());
             $languages = $this->langRepository->findAll();
 

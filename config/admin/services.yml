@@ -122,6 +122,7 @@ services:
     class: 'Vex6\OpenArticles\CommandHandler\AddArticleCommandHandler'
     arguments:
       - '@prestashop.core.admin.lang.repository'
+      - '@openarticles.repository.article_repository'
       - '@doctrine.orm.default_entity_manager'
     tags:
       - { name: 'tactician.handler', command: 'Vex6\OpenArticles\Command\AddArticleCommand' }

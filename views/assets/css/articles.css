@@ -7,9 +7,7 @@
     margin-bottom: 30px;
 }
 
-.oit-article {
 
-}
 
 .oit-article img{
     max-width: 100%;
@@ -19,11 +17,11 @@
     object-position: top;
 }
 
-.oit-article-title, .oit-article-product {
+.oit-article-title a, .oit-article-product {
     display: block;
     text-transform: capitalize;
     margin-top: 5px;
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-weight: 400;
     color: #111111;
     padding-left: 10px;
@@ -39,4 +37,25 @@
 .all-article-link {
     margin-top: 20px;
     color: #545454;
+}
+
+.oit-article-image {
+    max-width: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.oit-article-product-name {
+    display: block;
+    margin-top: 15px;
+    font-size: 1.1em;
+    font-weight: 400;
+    color: #e51111;
+}
+
+.oit-article-resume {
+    margin-top: 5px;
+    color: #545454;
+    font-size: .8em;
+    line-height: 1.5em;
 }

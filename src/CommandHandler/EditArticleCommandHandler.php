@@ -35,6 +35,7 @@ final class EditArticleCommandHandler implements EditArticleCommandHandlerInterf
     public $entityManager;
 
     /**
+     * @param LangRepository $langRepository
      * @param ArticleRepository $repository
      * @param EntityManagerInterface $entityManager
      */

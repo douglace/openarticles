@@ -34,7 +34,7 @@ class Openarticles extends Module implements WidgetInterface
 
         parent::__construct();
 
-        $this->displayName = $this->l('Affichage des articles');
+        $this->displayName = $this->l('Gestion des articles');
         $this->description = $this->l('Ce module permet de créer des articles et de les afficher sur la page d\'accueil et sur une page dédié');
         $this->ps_versions_compliancy = [
             'min' => '1.7.0.0',

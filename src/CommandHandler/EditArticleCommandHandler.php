@@ -68,7 +68,6 @@ final class EditArticleCommandHandler implements EditArticleCommandHandlerInterf
     {
         try {
             $article->setActive((bool)$command->getActive());
-            $article->setPosition((int)$command->getPosition());
             $article->setProductId((int)$command->getProductId());
             $languages = $this->langRepository->findAll();
 
